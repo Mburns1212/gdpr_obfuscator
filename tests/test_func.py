@@ -4,6 +4,7 @@ from moto import mock_aws
 import os
 import boto3
 from unittest.mock import patch
+import json
 
 @pytest.fixture(autouse=True)
 def aws_creds():
@@ -31,10 +32,16 @@ def s3_client_with_bucket_with_objects(s3_client_with_bucket):
            Key="test.csv",
            Body=file.read()
         )
-    with open('tests/test_files/test.json','rb') as file:
+    with open('tests/test_files/test_obj.json','rb') as file:
         s3_client_with_bucket.put_object(
             Bucket="test-bucket",
-            Key="test.json",
+            Key="test_obj.json",
+            Body=file.read()
+        )
+    with open('tests/test_files/test_array.json','rb') as file:
+        s3_client_with_bucket.put_object(
+            Bucket="test-bucket",
+            Key="test_array.json",
             Body=file.read()
         )
     yield s3_client_with_bucket
@@ -48,7 +55,7 @@ def test_returns_bytestream_csv(mock_client, s3_client_with_bucket_with_objects)
 @patch('src.func.client')
 def test_returns_bytestream_json(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
-    assert type(obfuscator({'file_to_obfuscate': 's3://test-bucket/test.json', 'pii_fields': ['student_id']})) == bytes
+    assert type(obfuscator({'file_to_obfuscate': 's3://test-bucket/test_array.json', 'pii_fields': ['student_id']})) == bytes
 
 @patch('src.func.client')
 def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
@@ -59,10 +66,18 @@ def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
     assert result == expected
 
 @patch('src.func.client')
-def test_obfuscates_piis_json(mock_client, s3_client_with_bucket_with_objects):
+def test_obfuscates_piis_json_array(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
-    result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test.json', 'pii_fields': ['student_id']}).decode('utf-8')
-    with open('tests/test_files/obfuscated.json','rb') as file:
+    result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_array.json', 'pii_fields': ['student_id']}).decode('utf-8')
+    with open('tests/test_files/obfuscated_array.json','rb') as file:
         expected = file.read().decode('utf-8')
-    assert result == expected
+    assert json.loads(result) == json.loads(expected)
+
+@patch('src.func.client')
+def test_obfuscates_piis_json_obj(mock_client, s3_client_with_bucket_with_objects):
+    mock_client.return_value = s3_client_with_bucket_with_objects
+    result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_obj.json', 'pii_fields': ['student_id']}).decode('utf-8')
+    with open('tests/test_files/obfuscated_obj.json','rb') as file:
+        expected = file.read().decode('utf-8')
+    assert json.loads(result) == json.loads(expected)
 
