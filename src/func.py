@@ -18,11 +18,20 @@ def obfuscator(event):
         return byte_csv
     if file_type == 'json':
         json_file = json.loads(s3_client.get_object(Bucket=bucket_name, Key=key)['Body'].read())
-        for item in json_file:
-            for field in item:
-                if field in piis:
-                    item[field] = '***'
+        if type(json_file) == list:
+            for item in json_file:
+                for field in item:
+                    if field in piis:
+                        item[field] = '***'
+        if type(json_file) == dict:
+            for key in json_file.keys():
+                for item in json_file[key]:
+                    for field in item:
+                        if field in piis:
+                            item[field] = '***'
         byte_json = json.dumps(json_file,indent=2).encode('utf-8')
         return byte_json
+    
+
 
 
