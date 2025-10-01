@@ -39,12 +39,6 @@ def obfuscator(event):
                 parquet_df[column] = '***'
         byte_parquet = parquet_df.to_parquet(engine='fastparquet')
         return byte_parquet
-    
-# obfuscator({'file_to_obfuscate': 's3://mb-gdpr-demo-bucket/test.parquet', 'pii_fields': ['student_id']})
-
-with open('tests/test_files/obfuscated.parquet','wb') as file:
-    result = obfuscator({'file_to_obfuscate': 's3://mb-gdpr-demo-bucket/test.parquet', 'pii_fields': ['student_id']})
-    file.write(result)
 
     
 
