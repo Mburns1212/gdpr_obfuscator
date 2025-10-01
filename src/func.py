@@ -1,6 +1,7 @@
 import pandas
 from boto3 import client
 import json
+import io
 
 def obfuscator(event):
     file = event['file_to_obfuscate']
@@ -31,6 +32,20 @@ def obfuscator(event):
                             item[field] = '***'
         byte_json = json.dumps(json_file,indent=2).encode('utf-8')
         return byte_json
+    if '.parquet' in key:
+        parquet_df = pandas.read_parquet(io.BytesIO(s3_client.get_object(Bucket=bucket_name, Key=key)['Body'].read()),engine='fastparquet')
+        for column in parquet_df:
+            if column in piis:
+                parquet_df[column] = '***'
+        byte_parquet = parquet_df.to_parquet(engine='fastparquet')
+        return byte_parquet
+    
+# obfuscator({'file_to_obfuscate': 's3://mb-gdpr-demo-bucket/test.parquet', 'pii_fields': ['student_id']})
+
+with open('tests/test_files/obfuscated.parquet','wb') as file:
+    result = obfuscator({'file_to_obfuscate': 's3://mb-gdpr-demo-bucket/test.parquet', 'pii_fields': ['student_id']})
+    file.write(result)
+
     
 
 
