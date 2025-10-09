@@ -1,0 +1,74 @@
+{
+  "students": [
+    {
+      "student_id": "1234",
+      "name": "***",
+      "course": "Software Engineering",
+      "cohort": "16",
+      "graduation_date": "2024-03-21",
+      "email_address": "j.smith@gmail.com",
+      "address": {
+        "street": "101 Main St",
+        "city": "New York",
+        "country": "USA",
+        "contact": {
+          "phone": "+1-212-555-1000",
+          "emergency": {
+            "name": "***",
+            "relation": "Mother",
+            "phone": "+1-212-555-2000"
+          }
+        }
+      },
+      "grades": {
+        "semester_1": {
+          "math": 88,
+          "programming": 92,
+          "databases": 81
+        },
+        "semester_2": {
+          "algorithms": 85,
+          "software_design": 90
+        }
+      }
+    },
+    {
+      "student_id": "1235",
+      "name": "***",
+      "course": "Software Development",
+      "cohort": "16",
+      "graduation_date": "2024-03-21",
+      "email_address": "j.smith1@gmail.com",
+      "address": {
+        "street": "202 Park Ave",
+        "city": "Boston",
+        "country": "USA",
+        "contact": {
+          "phone": "+1-617-555-1100",
+          "emergency": {
+            "name": "***",
+            "relation": "Sister",
+            "phone": "+1-617-555-2200"
+          }
+        }
+      },
+      "grades": {
+        "semester_1": {
+          "math": 82,
+          "programming": 89,
+          "databases": 79
+        },
+        "semester_2": {
+          "algorithms": 87,
+          "software_design": 91
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "school": "Tech University",
+    "department": "Computer Science",
+    "academic_year": "2023-2024"
+  }
+}
+
