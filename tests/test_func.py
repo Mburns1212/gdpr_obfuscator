@@ -48,12 +48,19 @@ def s3_client_with_bucket_with_objects(s3_client_with_bucket):
             Key="test_array.json",
             Body=file.read()
         )
+    with open('tests/test_files/test_nested.json','rb') as file:
+        s3_client_with_bucket.put_object(
+            Bucket="test-bucket",
+            Key="test_nested.json",
+            Body=file.read()
+        )
     with open('tests/test_files/test.parquet','rb') as file:
         s3_client_with_bucket.put_object(
             Bucket="test-bucket",
             Key="test.parquet",
             Body=file.read()
         )
+
     yield s3_client_with_bucket
 
 
@@ -93,6 +100,14 @@ def test_obfuscates_piis_json_obj(mock_client, s3_client_with_bucket_with_object
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_obj.json', 'pii_fields': ['student_id']}).decode('utf-8')
     with open('tests/test_files/obfuscated_obj.json','rb') as file:
+        expected = file.read().decode('utf-8')
+    assert json.loads(result) == json.loads(expected)
+
+@patch('src.func.client')
+def test_obfuscates_piis_nested_json(mock_client, s3_client_with_bucket_with_objects):
+    mock_client.return_value = s3_client_with_bucket_with_objects
+    result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_nested.json', 'pii_fields': ['name']}).decode('utf-8')
+    with open('tests/test_files/obfuscated_nested.json','rb') as file:
         expected = file.read().decode('utf-8')
     assert json.loads(result) == json.loads(expected)
 
