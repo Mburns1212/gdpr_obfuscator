@@ -2,6 +2,7 @@ import pandas
 from boto3 import client
 import json
 import io
+from utils.json_obfuscate import json_obfuscate
 
 def obfuscator(event):
     if not isinstance(event, dict):
@@ -30,17 +31,7 @@ def obfuscator(event):
     
     if file_type == 'json':
         json_file = json.loads(s3_client.get_object(Bucket=bucket_name, Key=key)['Body'].read())
-        if type(json_file) == list:
-            for item in json_file:
-                for field in item:
-                    if field in piis:
-                        item[field] = '***'
-        if type(json_file) == dict:
-            for key in json_file.keys():
-                for item in json_file[key]:
-                    for field in item:
-                        if field in piis:
-                            item[field] = '***'
+        json_obfuscate(json_file, piis)
         byte_json = json.dumps(json_file,indent=2).encode('utf-8')
         return byte_json
     
