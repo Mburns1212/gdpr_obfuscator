@@ -135,4 +135,3 @@ def test_input_missing_keys(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(ValueError, match=re.escape("Missing key(s): {'pii_fields'}")):
         obfuscator({'file_to_obfuscate': 's3://test-bucket/test.csv'})
-
