@@ -1,5 +1,5 @@
 import pytest
-from src.func import obfuscator
+from src.obfuscator_package.func import obfuscator
 from moto import mock_aws
 import os
 import boto3
@@ -64,22 +64,22 @@ def s3_client_with_bucket_with_objects(s3_client_with_bucket):
     yield s3_client_with_bucket
 
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_returns_bytestream_csv(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     assert type(obfuscator({'file_to_obfuscate': 's3://test-bucket/test.csv', 'pii_fields': ['student_id']})) == bytes
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_returns_bytestream_json(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     assert type(obfuscator({'file_to_obfuscate': 's3://test-bucket/test_array.json', 'pii_fields': ['student_id']})) == bytes
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_returns_bytestream_parquet(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     assert type(obfuscator({'file_to_obfuscate': 's3://test-bucket/test.parquet', 'pii_fields': ['student_id']})) == bytes
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test.csv', 'pii_fields': ['student_id','course']}).decode('utf-8')
@@ -87,7 +87,7 @@ def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
         expected = file.read().decode('utf-8')
     assert result == expected
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_obfuscates_piis_json_array(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_array.json', 'pii_fields': ['student_id']}).decode('utf-8')
@@ -95,7 +95,7 @@ def test_obfuscates_piis_json_array(mock_client, s3_client_with_bucket_with_obje
         expected = file.read().decode('utf-8')
     assert json.loads(result) == json.loads(expected)
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_obfuscates_piis_json_obj(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_obj.json', 'pii_fields': ['student_id']}).decode('utf-8')
@@ -103,7 +103,7 @@ def test_obfuscates_piis_json_obj(mock_client, s3_client_with_bucket_with_object
         expected = file.read().decode('utf-8')
     assert json.loads(result) == json.loads(expected)
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_obfuscates_piis_nested_json(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator({'file_to_obfuscate': 's3://test-bucket/test_nested.json', 'pii_fields': ['name']}).decode('utf-8')
@@ -111,27 +111,28 @@ def test_obfuscates_piis_nested_json(mock_client, s3_client_with_bucket_with_obj
         expected = file.read().decode('utf-8')
     assert json.loads(result) == json.loads(expected)
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_parquet(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = pd.read_parquet(io.BytesIO(obfuscator({'file_to_obfuscate': 's3://test-bucket/test.parquet', 'pii_fields': ['student_id']})))
     expected = pd.read_parquet('tests/test_files/obfuscated.parquet')
     assert_frame_equal(result,expected)
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_invalid_file_type(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(ValueError, match='txt files are not supported'):
         obfuscator({'file_to_obfuscate': 's3://test-bucket/test.txt', 'pii_fields': ['student_id']})
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_invalid_input_type(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(TypeError, match='Input should be a dictionary'):
         obfuscator('incorrect_input')
 
-@patch('src.func.client')
+@patch('src.obfuscator_package.func.client')
 def test_input_missing_keys(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(ValueError, match=re.escape("Missing key(s): {'pii_fields'}")):
         obfuscator({'file_to_obfuscate': 's3://test-bucket/test.csv'})
+
