@@ -8,12 +8,11 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
-        "fastparquet"
+        "fastparquet",
+        "pandas"
     ],
     extras_require={
-        "pandas": ["pandas"],
-        "boto3" : ["boto3"],
-        "all": ["pandas", "boto3"]
+        "all" : ["boto3"]
     },
     python_requires=">=3.9",
 )
