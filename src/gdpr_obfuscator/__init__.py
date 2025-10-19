@@ -1,1 +1,1 @@
-from .func import obfuscator
+from .obfuscator import obfuscator
