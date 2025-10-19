@@ -1,5 +1,5 @@
 import pytest
-from src.obfuscator_package.func import obfuscator
+from src.gdpr_obfuscator.func import obfuscator
 from moto import mock_aws
 import os
 import boto3
