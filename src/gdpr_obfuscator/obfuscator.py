@@ -2,7 +2,7 @@ import pandas
 from boto3 import client
 import json
 import io
-from gdpr_obfuscator.json_obfuscate import json_obfuscate
+from .json_obfuscate import json_obfuscate
 
 
 def obfuscator(event):
@@ -42,8 +42,12 @@ def obfuscator(event):
     if '.parquet' in key:
         parquet_file = s3_client.get_object(Bucket=bucket_name,
                                             Key=key)['Body'].read()
-        parquet_df = pandas.read_parquet(io.BytesIO(parquet_file),
-                                         engine='fastparquet')
+        try:
+            parquet_df = pandas.read_parquet(io.BytesIO(parquet_file),
+                                            engine='fastparquet')
+        except (ValueError):
+            parquet_df = pandas.read_parquet(io.BytesIO(parquet_file),
+                                            engine='pyarrow')
         for column in parquet_df:
             if column in piis:
                 parquet_df[column] = '***'
