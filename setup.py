@@ -12,7 +12,7 @@ setup(
         "pandas"
     ],
     extras_require={
-        "all" : ["boto3"]
+        "all": ["boto3"]
     },
     python_requires=">=3.9",
 )

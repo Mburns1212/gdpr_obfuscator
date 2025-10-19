@@ -44,10 +44,10 @@ def obfuscator(event):
                                             Key=key)['Body'].read()
         try:
             parquet_df = pandas.read_parquet(io.BytesIO(parquet_file),
-                                            engine='fastparquet')
+                                             engine='fastparquet')
         except (ValueError):
             parquet_df = pandas.read_parquet(io.BytesIO(parquet_file),
-                                            engine='pyarrow')
+                                             engine='pyarrow')
         for column in parquet_df:
             if column in piis:
                 parquet_df[column] = '***'
