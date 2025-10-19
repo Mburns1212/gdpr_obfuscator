@@ -1,5 +1,5 @@
 import pytest
-from src.gdpr_obfuscator.func import obfuscator
+from src.gdpr_obfuscator.obfuscator import obfuscator
 from moto import mock_aws
 import os
 import boto3
@@ -58,7 +58,7 @@ def s3_client_with_bucket_with_objects(s3_client_with_bucket):
     yield s3_client_with_bucket
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_returns_bytestream_csv(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -76,7 +76,7 @@ def test_returns_bytestream_csv(
     )
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_returns_bytestream_json(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -94,7 +94,7 @@ def test_returns_bytestream_json(
     )
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_returns_bytestream_parquet(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -112,7 +112,7 @@ def test_returns_bytestream_parquet(
     )
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = obfuscator(
@@ -126,7 +126,7 @@ def test_obfuscates_piis_csv(mock_client, s3_client_with_bucket_with_objects):
     assert result == expected
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_obfuscates_piis_json_array(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -142,7 +142,7 @@ def test_obfuscates_piis_json_array(
     assert json.loads(result) == json.loads(expected)
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_obfuscates_piis_json_obj(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -158,7 +158,7 @@ def test_obfuscates_piis_json_obj(
     assert json.loads(result) == json.loads(expected)
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_obfuscates_piis_nested_json(
     mock_client, s3_client_with_bucket_with_objects
 ):
@@ -174,7 +174,7 @@ def test_obfuscates_piis_nested_json(
     assert json.loads(result) == json.loads(expected)
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_parquet(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     result = pd.read_parquet(
@@ -191,7 +191,7 @@ def test_parquet(mock_client, s3_client_with_bucket_with_objects):
     assert_frame_equal(result, expected)
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_invalid_file_type(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(ValueError, match="txt files are not supported"):
@@ -203,14 +203,14 @@ def test_invalid_file_type(mock_client, s3_client_with_bucket_with_objects):
         )
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_invalid_input_type(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(TypeError, match="Input should be a dictionary"):
         obfuscator("incorrect_input")
 
 
-@patch("src.obfuscator_package.func.client")
+@patch("src.gdpr_obfuscator.obfuscator.client")
 def test_input_missing_keys(mock_client, s3_client_with_bucket_with_objects):
     mock_client.return_value = s3_client_with_bucket_with_objects
     with pytest.raises(
