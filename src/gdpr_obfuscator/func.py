@@ -2,7 +2,7 @@ import pandas
 from boto3 import client
 import json
 import io
-from obfuscator_package.json_obfuscate import json_obfuscate
+from gdpr_obfuscator.json_obfuscate import json_obfuscate
 
 
 def obfuscator(event):
