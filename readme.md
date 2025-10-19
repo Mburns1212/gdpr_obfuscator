@@ -32,11 +32,17 @@ pip install path_to_package[all]
 
 ```bash
 
-pip install git+https://github.com/Mburns1212/gdpr_obfuscator.git[all]
+pip install git+https://github.com/Mburns1212/gdpr_obfuscator.git#egg=gdpr_obfuscator[all]
 
 ```
 
-If you are deploying in AWS where boto3 and pandas may be built in and don't want to install them, don't include [all]. Can also use [pandas] and [boto3] to only install these packages. Fastparquet will always be installed.
+If you are deploying in AWS where boto3 may be built in and don't want to install it run:
+
+```bash
+
+pip install git+https://github.com/Mburns1212/gdpr_obfuscator.git
+
+```
 
 For the full repo use git clone.
 
